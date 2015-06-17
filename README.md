@@ -39,3 +39,5 @@ Consider to add Apache commons, Guava (Not included).
 
 If you want DI then probably best candidate is Guice.
 
+But... Probably YAGNI!
+
