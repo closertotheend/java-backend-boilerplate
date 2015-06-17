@@ -2,6 +2,9 @@
 
 Simple java REST server composed from various libraries.
 
+If you are looking for the frontend which works with this project (on other dedicated server, such as Apache) then
+consider to check  https://github.com/ilja903/simple-frontend-boilerplate
+
 Idea per 2015: Use only easy interchangable minimalistic libraries. 
 
 Related: http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks
