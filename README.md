@@ -36,7 +36,6 @@ Related: http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks
 #### Also:
 Consider to add Apache commons, Guava (Not included).
 
-
 If you want DI then probably best candidate is Guice.
 
 But... Probably YAGNI!
