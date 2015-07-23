@@ -1,35 +1,30 @@
 package config;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.postgresql.ds.PGPoolingDataSource;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class AppDataSource {
 
-    static BasicDataSource dataSource = createMostBasicDataSource();
-
-    private static BasicDataSource createMostBasicDataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUsername("postgres");
+    private static PGPoolingDataSource dataSource;
+    static {
+        // Not recommended, you may need to implement connection pooling or use apache database pooling lib
+        dataSource = new PGPoolingDataSource();
+        dataSource.setServerName("localhost");
+        dataSource.setUser("postgres");
         dataSource.setPassword("123456");
-        dataSource.setUrl("jdbc:postgresql://localhost/spark");
-        return dataSource;
+        dataSource.setDatabaseName("spark");
     }
 
-    public static BasicDataSource getDataSource() {
-        return dataSource;
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 
-    /*
-    * create datasource with only one connection and without default autocommit
-    * */
-    public static DataSource createTestDataSource() {
-        BasicDataSource dataSource = createMostBasicDataSource();
-        dataSource.setDefaultAutoCommit(false);
-        dataSource.setMaxActive(1);
-        dataSource.setMinIdle(1);
-        return dataSource;
+    public static Connection getTransactConnection() throws SQLException {
+            Connection connection = getConnection();
+            connection.setAutoCommit(false);
+            return connection;
     }
 
 }

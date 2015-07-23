@@ -4,51 +4,53 @@ import com.google.gson.JsonParser;
 import config.AppDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import spark.ResponseTransformer;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 import static spark.Spark.*;
 
 
 public class Application {
 
+    static ResponseTransformer toJson = new Gson()::toJson;
+    static QueryRunner queryRunner = new QueryRunner();
+
     public static void main(String... args) {
-        try {
-            start(AppDataSource.getDataSource());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        get("/", (request, response) -> "Greetings!", toJson);
 
-    public static void start(DataSource dataSource)  {
-        QueryRunner queryRunner = new QueryRunner(dataSource);
+        get("/users", (request, response) -> {
+            try (Connection connection = AppDataSource.getConnection()) {
+                return queryRunner.query(connection, "SELECT * FROM users", new MapListHandler());
+            }
+        }, toJson);
 
-        get("/",
-                (request, response) -> "Greetings!",
-                new Gson()::toJson);
+        post("/user", (request, response) -> {
+            // Start transaction
+            try (Connection connection = AppDataSource.getTransactConnection()) {
+                JsonObject userJson = new JsonParser().parse(request.body()).getAsJsonObject();
 
-        get("/users",
-                (request, response) -> queryRunner.query("SELECT * FROM users", new MapListHandler()),
-                new Gson()::toJson);
+                String name = userJson.get("name").getAsString();
+                LocalDate dateOfBirth = LocalDate.parse(userJson.get("date_of_birth").getAsString());
 
-        post("/user",
-                (request, response) -> {
-                    JsonObject jsonRequest = new JsonParser().parse(request.body()).getAsJsonObject();
+                List<Map<String, Object>> responseObject = queryRunner.insert(connection,
+                        "INSERT INTO users (name, date_of_birth) VALUES (?, '" + dateOfBirth + "');",
+                        new MapListHandler(), name);
 
-                    String name = jsonRequest.get("name").getAsString();
-                    LocalDate dateOfBirth = LocalDate.parse(jsonRequest.get("date_of_birth").getAsString());
+                // Commit transaction
+                connection.commit();
 
-                    return queryRunner.insert(
-                            "INSERT INTO users (name, date_of_birth) VALUES (?, '" + dateOfBirth + "');",
-                            new MapListHandler(), name);
-
-                },
-                new Gson()::toJson);
+                return responseObject;
+            }
+        }, toJson);
 
 
         after((request, response) -> {
-            response.header("Access-Control-Allow-Origin", "http://localhost");
+            // For security reasons do not forget to change "*" to url
+            response.header("Access-Control-Allow-Origin", "*");
             response.type("application/json");
         });
     }
