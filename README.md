@@ -9,7 +9,7 @@ Idea per 2015: Use only easy interchangable minimalistic libraries.
 
 Related: http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks
 
-#### Basic bundle includes
+#### Basic bundle includes:
 
 * Spark 2.2 (Simple REST server)
 
@@ -33,7 +33,7 @@ Related: http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks
 
 * Rest-assured (both for testing)
 
-#### Whole app
+#### Whole app source:
       public class Application {
           static ResponseTransformer toJson = new Gson()::toJson;
           static QueryRunner queryRunner = new QueryRunner();
