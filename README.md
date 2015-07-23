@@ -33,6 +33,51 @@ Related: http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks
 
 * Rest-assured (both for testing)
 
+#### Whole app
+      public class Application {
+          static ResponseTransformer toJson = new Gson()::toJson;
+          static QueryRunner queryRunner = new QueryRunner();
+      
+          public static void main(String... args) {
+              get("/", (request, response) -> "Greetings!", toJson);
+      
+              get("/users", (request, response) -> {
+                  try (Connection connection = AppDataSource.getConnection()) {
+                      return queryRunner.query(connection, "SELECT * FROM users", new MapListHandler());
+                  }
+              }, toJson);
+      
+              post("/user", (request, response) -> {
+                  // Start transaction
+                  try (Connection connection = AppDataSource.getTransactConnection()) {
+                      JsonObject userJson = new JsonParser().parse(request.body()).getAsJsonObject();
+      
+                      String name = userJson.get("name").getAsString();
+                      LocalDate dateOfBirth = LocalDate.parse(userJson.get("date_of_birth").getAsString());
+      
+                      List<Map<String, Object>> responseObject = queryRunner.insert(connection,
+                              "INSERT INTO users (name, date_of_birth) VALUES (?, '" + dateOfBirth + "');",
+                              new MapListHandler(), name);
+      
+                      // Commit transaction
+                      connection.commit();
+      
+                      return responseObject;
+                  }
+              }, toJson);
+      
+      
+              after((request, response) -> {
+                  // For security reasons do not forget to change "*" to url
+                  response.header("Access-Control-Allow-Origin", "*");
+                  response.type("application/json");
+              });
+          }
+      }
+
+
+
+
 #### Also:
 Consider to add Apache commons, Guava (Not included).
 
