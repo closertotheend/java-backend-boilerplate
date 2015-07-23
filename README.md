@@ -5,9 +5,9 @@ Simple java REST server composed from various libraries.
 If you are looking for the frontend which works with this project (on other dedicated server, such as Apache) then
 consider to check  https://github.com/ilja903/simple-frontend-boilerplate
 
-Idea per 2015: Use only easy interchangable minimalistic libraries. 
+Idea per 2015: Use only easy interchangable minimalistic libraries. (http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks)
 
-Related: http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks
+Idea 2 per 2015: No magic. Stay close to metal.
 
 #### Basic bundle includes:
 
@@ -18,8 +18,6 @@ Related: http://tom.lokhorst.eu/2010/09/why-libraries-are-better-than-frameworks
 ###### Connectivity
 
 * commons-dbutils
-
-* commons-dbcp
 
 * postgresql driver
 
