@@ -32,6 +32,7 @@ Idea 2 per 2015: No magic. Stay close to metal.
 * Rest-assured (both for testing)
 
 #### Whole app source:
+```java
       public class Application {
           static ResponseTransformer toJson = new Gson()::toJson;
           static QueryRunner queryRunner = new QueryRunner();
@@ -72,9 +73,7 @@ Idea 2 per 2015: No magic. Stay close to metal.
               });
           }
       }
-
-
-
+```
 
 #### Also:
 Consider to add Apache commons, Guava (Not included).
