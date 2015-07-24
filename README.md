@@ -31,6 +31,10 @@ Idea 2 per 2015: No magic. Stay close to metal.
 
 * Rest-assured (both for testing)
 
+#### To run Flyway migrations use:
+
+mvn clean compile flyway:migrate
+
 #### Whole app source:
 ```java
 public class Application {
